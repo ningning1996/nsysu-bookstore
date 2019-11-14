@@ -1,0 +1,519 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="bookstoreModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="BOOK">
+          <Key>
+            <PropertyRef Name="bID" />
+          </Key>
+          <Property Name="bID" Type="char" MaxLength="50" Nullable="false" />
+          <Property Name="bname" Type="char" MaxLength="100" />
+          <Property Name="author" Type="char" MaxLength="50" />
+          <Property Name="price" Type="int" />
+        </EntityType>
+        <EntityType Name="BUYBOOK">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="cID" Type="char" MaxLength="50" />
+          <Property Name="sID" Type="char" MaxLength="10" />
+          <Property Name="seq" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="amount" Type="int" />
+        </EntityType>
+        <EntityType Name="COURSE">
+          <Key>
+            <PropertyRef Name="cID" />
+          </Key>
+          <Property Name="cID" Type="char" MaxLength="50" Nullable="false" />
+          <Property Name="cname" Type="char" MaxLength="50" />
+          <Property Name="ctime" Type="time" Precision="7" />
+          <Property Name="tID" Type="nchar" MaxLength="10" />
+          <Property Name="bID" Type="char" MaxLength="50" />
+          <Property Name="dID" Type="nchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="DEPARTMENT">
+          <Key>
+            <PropertyRef Name="dID" />
+          </Key>
+          <Property Name="dID" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="dname" Type="nchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="STUDENT">
+          <Key>
+            <PropertyRef Name="sID" />
+          </Key>
+          <Property Name="sID" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="sname" Type="char" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <!--產生期間發現錯誤:
+警告 6002: 資料表/檢視 'bookstore.dbo.TAKE' 未定義主索引鍵。已推斷此索引鍵，並將定義建立成唯讀的資料表/檢視。-->
+        <EntityType Name="TAKE">
+          <Key>
+            <PropertyRef Name="sID" />
+          </Key>
+          <Property Name="sID" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="cID" Type="char" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="TEACHER">
+          <Key>
+            <PropertyRef Name="tID" />
+          </Key>
+          <Property Name="tID" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="tname" Type="char" MaxLength="10" />
+          <Property Name="tdepartment" Type="char" MaxLength="10" />
+        </EntityType>
+        <Association Name="FK_BUYBOOK_COURSE">
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="0..1" />
+          <End Role="BUYBOOK" Type="Self.BUYBOOK" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="COURSE">
+              <PropertyRef Name="cID" />
+            </Principal>
+            <Dependent Role="BUYBOOK">
+              <PropertyRef Name="cID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BUYBOOK_STUDENT">
+          <End Role="STUDENT" Type="Self.STUDENT" Multiplicity="0..1" />
+          <End Role="BUYBOOK" Type="Self.BUYBOOK" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="STUDENT">
+              <PropertyRef Name="sID" />
+            </Principal>
+            <Dependent Role="BUYBOOK">
+              <PropertyRef Name="sID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_COURSE_BOOK">
+          <End Role="BOOK" Type="Self.BOOK" Multiplicity="0..1" />
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BOOK">
+              <PropertyRef Name="bID" />
+            </Principal>
+            <Dependent Role="COURSE">
+              <PropertyRef Name="bID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_COURSE_COURSE">
+          <End Role="DEPARTMENT" Type="Self.DEPARTMENT" Multiplicity="0..1" />
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DEPARTMENT">
+              <PropertyRef Name="dID" />
+            </Principal>
+            <Dependent Role="COURSE">
+              <PropertyRef Name="dID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_COURSE_TEACHER">
+          <End Role="TEACHER" Type="Self.TEACHER" Multiplicity="0..1" />
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TEACHER">
+              <PropertyRef Name="tID" />
+            </Principal>
+            <Dependent Role="COURSE">
+              <PropertyRef Name="tID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TAKE_COURSE">
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="0..1" />
+          <End Role="TAKE" Type="Self.TAKE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="COURSE">
+              <PropertyRef Name="cID" />
+            </Principal>
+            <Dependent Role="TAKE">
+              <PropertyRef Name="cID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TAKE_STUDENT">
+          <End Role="STUDENT" Type="Self.STUDENT" Multiplicity="1" />
+          <End Role="TAKE" Type="Self.TAKE" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="STUDENT">
+              <PropertyRef Name="sID" />
+            </Principal>
+            <Dependent Role="TAKE">
+              <PropertyRef Name="sID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="bookstoreModelStoreContainer">
+          <EntitySet Name="BOOK" EntityType="Self.BOOK" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BUYBOOK" EntityType="Self.BUYBOOK" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="COURSE" EntityType="Self.COURSE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DEPARTMENT" EntityType="Self.DEPARTMENT" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="STUDENT" EntityType="Self.STUDENT" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TEACHER" EntityType="Self.TEACHER" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TAKE" EntityType="Self.TAKE" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [TAKE].[sID] AS [sID], 
+    [TAKE].[cID] AS [cID]
+    FROM [dbo].[TAKE] AS [TAKE]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_BUYBOOK_COURSE" Association="Self.FK_BUYBOOK_COURSE">
+            <End Role="COURSE" EntitySet="COURSE" />
+            <End Role="BUYBOOK" EntitySet="BUYBOOK" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BUYBOOK_STUDENT" Association="Self.FK_BUYBOOK_STUDENT">
+            <End Role="STUDENT" EntitySet="STUDENT" />
+            <End Role="BUYBOOK" EntitySet="BUYBOOK" />
+          </AssociationSet>
+          <AssociationSet Name="FK_COURSE_BOOK" Association="Self.FK_COURSE_BOOK">
+            <End Role="BOOK" EntitySet="BOOK" />
+            <End Role="COURSE" EntitySet="COURSE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_COURSE_COURSE" Association="Self.FK_COURSE_COURSE">
+            <End Role="DEPARTMENT" EntitySet="DEPARTMENT" />
+            <End Role="COURSE" EntitySet="COURSE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_COURSE_TEACHER" Association="Self.FK_COURSE_TEACHER">
+            <End Role="TEACHER" EntitySet="TEACHER" />
+            <End Role="COURSE" EntitySet="COURSE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TAKE_COURSE" Association="Self.FK_TAKE_COURSE">
+            <End Role="COURSE" EntitySet="COURSE" />
+            <End Role="TAKE" EntitySet="TAKE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TAKE_STUDENT" Association="Self.FK_TAKE_STUDENT">
+            <End Role="STUDENT" EntitySet="STUDENT" />
+            <End Role="TAKE" EntitySet="TAKE" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="bookstoreModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BOOK">
+          <Key>
+            <PropertyRef Name="bID" />
+          </Key>
+          <Property Name="bID" Type="String" MaxLength="50" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="bname" Type="String" MaxLength="100" FixedLength="true" Unicode="false" />
+          <Property Name="author" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
+          <Property Name="price" Type="Int32" />
+          <NavigationProperty Name="COURSE" Relationship="Self.FK_COURSE_BOOK" FromRole="BOOK" ToRole="COURSE" />
+        </EntityType>
+        <EntityType Name="BUYBOOK">
+          <Key>
+            <PropertyRef Name="seq" />
+          </Key>
+          <Property Name="cID" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
+          <Property Name="sID" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="seq" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="amount" Type="Int32" />
+          <NavigationProperty Name="COURSE" Relationship="Self.FK_BUYBOOK_COURSE" FromRole="BUYBOOK" ToRole="COURSE" />
+          <NavigationProperty Name="STUDENT" Relationship="Self.FK_BUYBOOK_STUDENT" FromRole="BUYBOOK" ToRole="STUDENT" />
+        </EntityType>
+        <EntityType Name="COURSE">
+          <Key>
+            <PropertyRef Name="cID" />
+          </Key>
+          <Property Name="cID" Type="String" MaxLength="50" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="cname" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
+          <Property Name="ctime" Type="Time" Precision="7" />
+          <Property Name="tID" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Name="bID" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
+          <Property Name="dID" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="BOOK" Relationship="Self.FK_COURSE_BOOK" FromRole="COURSE" ToRole="BOOK" />
+          <NavigationProperty Name="BUYBOOK" Relationship="Self.FK_BUYBOOK_COURSE" FromRole="COURSE" ToRole="BUYBOOK" />
+          <NavigationProperty Name="DEPARTMENT" Relationship="Self.FK_COURSE_COURSE" FromRole="COURSE" ToRole="DEPARTMENT" />
+          <NavigationProperty Name="TEACHER" Relationship="Self.FK_COURSE_TEACHER" FromRole="COURSE" ToRole="TEACHER" />
+          <NavigationProperty Name="TAKE" Relationship="Self.FK_TAKE_COURSE" FromRole="COURSE" ToRole="TAKE" />
+        </EntityType>
+        <EntityType Name="DEPARTMENT">
+          <Key>
+            <PropertyRef Name="dID" />
+          </Key>
+          <Property Name="dID" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="dname" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="COURSE" Relationship="Self.FK_COURSE_COURSE" FromRole="DEPARTMENT" ToRole="COURSE" />
+        </EntityType>
+        <EntityType Name="STUDENT">
+          <Key>
+            <PropertyRef Name="sID" />
+          </Key>
+          <Property Name="sID" Type="String" MaxLength="10" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="sname" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="BUYBOOK" Relationship="Self.FK_BUYBOOK_STUDENT" FromRole="STUDENT" ToRole="BUYBOOK" />
+          <NavigationProperty Name="TAKE" Relationship="Self.FK_TAKE_STUDENT" FromRole="STUDENT" ToRole="TAKE" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TEACHER">
+          <Key>
+            <PropertyRef Name="tID" />
+          </Key>
+          <Property Name="tID" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="tname" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Name="tdepartment" Type="String" MaxLength="10" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="COURSE" Relationship="Self.FK_COURSE_TEACHER" FromRole="TEACHER" ToRole="COURSE" />
+        </EntityType>
+        <EntityType Name="TAKE">
+          <Key>
+            <PropertyRef Name="sID" />
+          </Key>
+          <Property Name="sID" Type="String" MaxLength="10" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="cID" Type="String" MaxLength="50" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="COURSE" Relationship="Self.FK_TAKE_COURSE" FromRole="TAKE" ToRole="COURSE" />
+          <NavigationProperty Name="STUDENT" Relationship="Self.FK_TAKE_STUDENT" FromRole="TAKE" ToRole="STUDENT" />
+        </EntityType>
+        <Association Name="FK_COURSE_BOOK">
+          <End Role="BOOK" Type="Self.BOOK" Multiplicity="0..1" />
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BOOK">
+              <PropertyRef Name="bID" />
+            </Principal>
+            <Dependent Role="COURSE">
+              <PropertyRef Name="bID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BUYBOOK_COURSE">
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="0..1" />
+          <End Role="BUYBOOK" Type="Self.BUYBOOK" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="COURSE">
+              <PropertyRef Name="cID" />
+            </Principal>
+            <Dependent Role="BUYBOOK">
+              <PropertyRef Name="cID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_BUYBOOK_STUDENT">
+          <End Role="STUDENT" Type="Self.STUDENT" Multiplicity="0..1" />
+          <End Role="BUYBOOK" Type="Self.BUYBOOK" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="STUDENT">
+              <PropertyRef Name="sID" />
+            </Principal>
+            <Dependent Role="BUYBOOK">
+              <PropertyRef Name="sID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_COURSE_COURSE">
+          <End Role="DEPARTMENT" Type="Self.DEPARTMENT" Multiplicity="0..1" />
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DEPARTMENT">
+              <PropertyRef Name="dID" />
+            </Principal>
+            <Dependent Role="COURSE">
+              <PropertyRef Name="dID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_COURSE_TEACHER">
+          <End Role="TEACHER" Type="Self.TEACHER" Multiplicity="0..1" />
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TEACHER">
+              <PropertyRef Name="tID" />
+            </Principal>
+            <Dependent Role="COURSE">
+              <PropertyRef Name="tID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TAKE_COURSE">
+          <End Role="COURSE" Type="Self.COURSE" Multiplicity="0..1" />
+          <End Role="TAKE" Type="Self.TAKE" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="COURSE">
+              <PropertyRef Name="cID" />
+            </Principal>
+            <Dependent Role="TAKE">
+              <PropertyRef Name="cID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TAKE_STUDENT">
+          <End Role="STUDENT" Type="Self.STUDENT" Multiplicity="1" />
+          <End Role="TAKE" Type="Self.TAKE" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="STUDENT">
+              <PropertyRef Name="sID" />
+            </Principal>
+            <Dependent Role="TAKE">
+              <PropertyRef Name="sID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="bookstoreEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BOOK" EntityType="Self.BOOK" />
+          <EntitySet Name="BUYBOOK" EntityType="Self.BUYBOOK" />
+          <EntitySet Name="COURSE" EntityType="Self.COURSE" />
+          <EntitySet Name="DEPARTMENT" EntityType="Self.DEPARTMENT" />
+          <EntitySet Name="STUDENT" EntityType="Self.STUDENT" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="TEACHER" EntityType="Self.TEACHER" />
+          <EntitySet Name="TAKE" EntityType="Self.TAKE" />
+          <AssociationSet Name="FK_COURSE_BOOK" Association="Self.FK_COURSE_BOOK">
+            <End Role="BOOK" EntitySet="BOOK" />
+            <End Role="COURSE" EntitySet="COURSE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BUYBOOK_COURSE" Association="Self.FK_BUYBOOK_COURSE">
+            <End Role="COURSE" EntitySet="COURSE" />
+            <End Role="BUYBOOK" EntitySet="BUYBOOK" />
+          </AssociationSet>
+          <AssociationSet Name="FK_BUYBOOK_STUDENT" Association="Self.FK_BUYBOOK_STUDENT">
+            <End Role="STUDENT" EntitySet="STUDENT" />
+            <End Role="BUYBOOK" EntitySet="BUYBOOK" />
+          </AssociationSet>
+          <AssociationSet Name="FK_COURSE_COURSE" Association="Self.FK_COURSE_COURSE">
+            <End Role="DEPARTMENT" EntitySet="DEPARTMENT" />
+            <End Role="COURSE" EntitySet="COURSE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_COURSE_TEACHER" Association="Self.FK_COURSE_TEACHER">
+            <End Role="TEACHER" EntitySet="TEACHER" />
+            <End Role="COURSE" EntitySet="COURSE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TAKE_COURSE" Association="Self.FK_TAKE_COURSE">
+            <End Role="COURSE" EntitySet="COURSE" />
+            <End Role="TAKE" EntitySet="TAKE" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TAKE_STUDENT" Association="Self.FK_TAKE_STUDENT">
+            <End Role="STUDENT" EntitySet="STUDENT" />
+            <End Role="TAKE" EntitySet="TAKE" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="bookstoreModelStoreContainer" CdmEntityContainer="bookstoreEntities1">
+          <EntitySetMapping Name="BOOK">
+            <EntityTypeMapping TypeName="bookstoreModel.BOOK">
+              <MappingFragment StoreEntitySet="BOOK">
+                <ScalarProperty Name="bID" ColumnName="bID" />
+                <ScalarProperty Name="bname" ColumnName="bname" />
+                <ScalarProperty Name="author" ColumnName="author" />
+                <ScalarProperty Name="price" ColumnName="price" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BUYBOOK">
+            <EntityTypeMapping TypeName="bookstoreModel.BUYBOOK">
+              <MappingFragment StoreEntitySet="BUYBOOK">
+                <ScalarProperty Name="cID" ColumnName="cID" />
+                <ScalarProperty Name="sID" ColumnName="sID" />
+                <ScalarProperty Name="seq" ColumnName="seq" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="COURSE">
+            <EntityTypeMapping TypeName="bookstoreModel.COURSE">
+              <MappingFragment StoreEntitySet="COURSE">
+                <ScalarProperty Name="cID" ColumnName="cID" />
+                <ScalarProperty Name="cname" ColumnName="cname" />
+                <ScalarProperty Name="ctime" ColumnName="ctime" />
+                <ScalarProperty Name="tID" ColumnName="tID" />
+                <ScalarProperty Name="bID" ColumnName="bID" />
+                <ScalarProperty Name="dID" ColumnName="dID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DEPARTMENT">
+            <EntityTypeMapping TypeName="bookstoreModel.DEPARTMENT">
+              <MappingFragment StoreEntitySet="DEPARTMENT">
+                <ScalarProperty Name="dID" ColumnName="dID" />
+                <ScalarProperty Name="dname" ColumnName="dname" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STUDENT">
+            <EntityTypeMapping TypeName="bookstoreModel.STUDENT">
+              <MappingFragment StoreEntitySet="STUDENT">
+                <ScalarProperty Name="sID" ColumnName="sID" />
+                <ScalarProperty Name="sname" ColumnName="sname" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="bookstoreModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TEACHER">
+            <EntityTypeMapping TypeName="bookstoreModel.TEACHER">
+              <MappingFragment StoreEntitySet="TEACHER">
+                <ScalarProperty Name="tID" ColumnName="tID" />
+                <ScalarProperty Name="tname" ColumnName="tname" />
+                <ScalarProperty Name="tdepartment" ColumnName="tdepartment" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TAKE">
+            <EntityTypeMapping TypeName="bookstoreModel.TAKE">
+              <MappingFragment StoreEntitySet="TAKE">
+                <ScalarProperty Name="sID" ColumnName="sID" />
+                <ScalarProperty Name="cID" ColumnName="cID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="無" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
