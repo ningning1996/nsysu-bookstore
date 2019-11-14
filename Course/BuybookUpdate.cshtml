@@ -1,0 +1,44 @@
+﻿@using 宏盈.Models;
+@model BuybookUpdateViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>修改訂購</title>
+<h2>修改訂購</h2>
+<br>
+<br>
+<div class="container " style="position:relative; left:400px;">
+    @using (Html.BeginForm("BuybookUpdate", "Course", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
+    {
+        <input type="hidden" name="seq" value="@Model.Buybook.seq " />
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="col-md-6">
+            <table>
+                <tr>
+                    <td>
+                        <h4 class="price">
+                            學生姓名：
+                            @Model.Buybook.STUDENT.sname
+                        </h4>
+
+                        <h4 class="price">
+                            訂購數量：
+                            @Html.TextBoxFor(m => m.Buybook.amount, new { @class = "form-control", style = "width:1000px" })
+                        </h4>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" class="btn btn-default" value="確認修改" onclick="confirmChecked()" />
+                                <a href="@Url.Action("Buybook","Course")" class="btn btn-default">取消</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+

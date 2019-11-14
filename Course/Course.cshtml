@@ -1,0 +1,59 @@
+﻿@using 宏盈.Models;
+@model CourseRetrieveViewModel
+@using PagedList.Mvc;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>課程</title>
+<h2>課程</h2>
+<br>
+<br>
+
+<div class="container " style="position:relative; left:250px;">
+    <div class="row">
+        @using (Html.BeginForm("Course", "Course", FormMethod.Get))
+        {
+            <div class="col-sm-2">
+                <span>關鍵字搜尋：</span>
+                <input type="text" class="form-control" name="keyword" value="@ViewBag.keyword" placeholder="輸入課程名稱" />
+            </div>
+            <div class="col-sm-2">
+                <br />
+                <button class="btn btn-default" type="submit">搜尋</button>
+            </div>
+        }
+    </div>
+</div>
+<div class="row list-group">
+    <p>
+        <br />
+        <table class="table table-striped">
+            <tr>
+                <th>課程名稱</th>
+                <th>課程系所</th>
+                <th>課程老師</th>
+                <th>課程書籍</th>
+                <th></th>
+            </tr>
+            @foreach (var courses in Model.courses)
+            {
+        <tr>
+            <td>@courses.cname </td>
+            <td>@courses.DEPARTMENT.dname </td>
+            <td>@courses.TEACHER.tname</td>
+            <td>@courses.BOOK.bname</td>
+            <td><button class="button button2 btn-info" type="button" onclick="javascript:window.location='@Url.Action("Buybook", "Course", new { cID = courses.cID})'">檢視課堂課本訂單</button></td>
+        </tr>
+            }
+        </table>
+    </p>
+
+</div>
+<div class="text-center">
+    @if (Model.courses != null)
+    {
+        @Html.PagedListPager(Model.courses, page => Url.Action("Course", new { page }))
+    }
+</div>
+

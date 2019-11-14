@@ -1,0 +1,107 @@
+﻿@using 宏盈.Models;
+@model  BuybookViewModel
+
+@{
+    ViewBag.Title = "CustomerProduct";
+}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<title>課堂課本訂單</title>
+<h2>課堂課本訂單</h2>
+<br>
+<br>
+<div class="container " style="position:relative; left:250px;">
+    @using (Html.BeginForm("Buybook", "Course", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal", role = "form" }))
+    {
+        <input type="hidden" name="cID" value="@Model.course.cID " />
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="card">
+            <div class="container-fliud">
+                <div class="form-group">
+                    @Html.Label("課程代碼", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10" style="position:relative; top:6px;">
+                        @Model.course.cID
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("課程名稱", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10" style="position:relative; top:6px;">
+                        @Model.course.cname
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("書籍名稱", new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Model.course.BOOK.bname
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Buybook.sID, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Buybook.sID, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Buybook.amount, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Buybook.amount, new { @class = "form-control" })
+                    </div>
+                </div>
+                <br><br>
+                <div class="container " style="position:relative; left:250px;">
+                    <input type="submit" class="btn btn-default" value="新增" onclick="confirmChecked()" />
+                    <a href="@Url.Action("Course","Course")" class="btn btn-default">取消</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@{
+    if (Model.Buybooks != null)
+    {
+        <div class="row list-group">
+            <p>
+                <br />
+
+                <table class="table table-striped">
+                    <tr>
+                        <th>學號</th>
+                        <th>姓名</th>
+                        <th>訂購數量</th>
+                        <th></th>
+                    </tr>
+                    @{int? ttotal = 0;}
+                    @{
+                        foreach (var Buybooks in Model.Buybooks)
+                        {
+                                        <tr>
+                                            <td>
+                                                @Buybooks.STUDENT.sID
+                                            </td>
+                                            <td>
+                                                @Buybooks.STUDENT.sname
+                                            </td>                                            
+                                            <td>
+                                                @Buybooks.amount
+                                            </td>
+                                            @{ttotal = ttotal + Buybooks.amount;}
+                                            <td>
+                                                <button class="button button2 btn-info" type="button" onclick="javascript:window.location='@Url.Action("BuybookUpdate", "Course", new { seq = Buybooks.seq, cID=Model.course.cID})'">修改</button>
+                                                <button class="button button2 btn-info" type="button" onclick="javascript:window.location='@Url.Action("BuybookDelete", "Course", new { seq = Buybooks.seq, cID=Model.course.cID})'">刪除</button>
+                                            </td>
+                                        </tr>
+                        }
+                    }
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="border-style:hidden ;">總計:@ttotal</td>
+                </tr>
+                </table>
+            </p>
+
+        </div>
+    }
+}
+
